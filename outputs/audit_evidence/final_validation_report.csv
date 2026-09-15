@@ -1,0 +1,10 @@
+check,passed
+final_rows_preserved,True
+unique_txn_id,True
+zero_duplicate_txn_id,True
+zero_null_txn_id,True
+unique_kyc_master,True
+unique_merchant_master,True
+transaction_dates_parsed,True
+amounts_parsed,True
+zero_chargeback_fanout,True

@@ -1,0 +1,6 @@
+relationship,rows,matched,unmatched,null_key,match_rate,master_duplicate_key
+transactions -> kyc,20000,6478,13522,0,32.39,0
+transactions -> merchants,20000,9631,10369,0,48.16,0
+chargebacks -> transactions,2800,2607,116,77,93.11,0
+chargebacks -> kyc,2800,885,1915,0,31.61,0
+chargebacks -> merchants,2800,1299,1501,0,46.39,0

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+langgraph
+langchain-groq
+duckdb
+matplotlib
+python-dotenv
+pydantic
+pandas
+networkx

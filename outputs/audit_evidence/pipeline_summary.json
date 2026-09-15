@@ -1,0 +1,12 @@
+{
+  "pipeline": "AgentIQ UPI Fraud Production Data Pipeline v2",
+  "final_rows": 20000,
+  "final_columns": 114,
+  "unique_transactions": 20000,
+  "kyc_linked_transactions": 6478,
+  "merchant_linked_transactions": 9631,
+  "disputed_transactions": 2451,
+  "derived_mcc_count": 1173,
+  "risk_flagged_transactions": 12836,
+  "final_gate_passed": true
+}

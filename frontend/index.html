@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPI Fraud Analytics — FinTech &amp; BFSI Analytics</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Command Bar -->
+  <header class="command-bar">
+    <div class="brand-section">
+      <div class="brand-icon">F</div>
+      <div class="brand-title">
+        <h1>UPI <span>FRAUD ANALYTICS</span></h1>
+        <div class="tag">TRACK 1 // FINTECH &amp; BFSI ANALYTICS</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="top-nav" id="tour-nav">
+      <button class="tab-btn active" data-tab="overview">Overview</button>
+      <button class="tab-btn" data-tab="rings">Fraud Rings</button>
+      <button class="tab-btn" data-tab="ledger">Risk Ledger</button>
+      <button class="tab-btn" data-tab="powerbi">Power BI</button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button class="btn-tour" onclick="startTour()">Take Tour</button>
+      <div class="radar-badge">
+        <span class="radar-dot"></span>
+        <span>20,000 transactions</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Split Body Area -->
+  <div id="app-body">
+    
+    <!-- Left Main Stage (~74% width) -->
+    <main id="main-stage">
+      
+      <!-- TAB 1: OVERVIEW -->
+      <section id="panel-overview" class="panel active">
+        
+        <!-- Hero KPI Deck -->
+        <div class="kpi-deck" id="kpi-section">
+          <div class="kpi-tile glow-amber">
+            <div class="kpi-label">Total Volume</div>
+            <div class="kpi-value" id="kpi-volume">...</div>
+            <div class="kpi-sub" id="kpi-volume-sub">20,000 transactions verified</div>
+          </div>
+          <div class="kpi-tile glow-red">
+            <div class="kpi-label">Average Risk Score</div>
+            <div class="kpi-value" id="kpi-risk">...</div>
+            <div class="kpi-sub" id="kpi-risk-sub">Composite benchmark: 0.00 – 1.00</div>
+          </div>
+          <div class="kpi-tile glow-purple">
+            <div class="kpi-label">High Risk Transactions</div>
+            <div class="kpi-value" id="kpi-highrisk">...</div>
+            <div class="kpi-sub" id="kpi-highrisk-sub">Triggering &ge; 3 risk flags</div>
+          </div>
+          <div class="kpi-tile glow-cyan">
+            <div class="kpi-label">Dispute Ratio</div>
+            <div class="kpi-value" id="kpi-disputes">...</div>
+            <div class="kpi-sub" id="kpi-disputes-sub">Unresolved dispute complaints</div>
+          </div>
+          <div class="kpi-tile glow-red">
+            <div class="kpi-label">Highest Chargeback Merchant</div>
+            <div class="kpi-value" id="kpi-merchant">...</div>
+            <div class="kpi-sub" id="kpi-merchant-sub">Critical 100% Chargeback Rate</div>
+          </div>
+        </div>
+
+        <!-- Charts Split Row 1 -->
+        <div class="charts-grid-split" id="chart-section">
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">Daily Volume &amp; Disputes</span>
+              <span class="card-tag">TIME SERIES</span>
+            </div>
+            <div id="plot-daily-trend" class="plot-container"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">Dispute Reasons</span>
+              <span class="card-tag">DISTRIBUTION</span>
+            </div>
+            <div id="plot-reasons" class="plot-container"></div>
+          </div>
+        </div>
+
+        <!-- Charts Split Row 2 -->
+        <div class="charts-grid-equal">
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">Volume by Category</span>
+              <span class="card-tag">₹ LAKHS</span>
+            </div>
+            <div id="plot-category-volume" class="plot-container"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">High Risk Transactions</span>
+              <span class="card-tag">TOP FLAGGED</span>
+            </div>
+            <div class="table-wrap" style="max-height: 290px;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>TXN ID</th>
+                    <th>USER</th>
+                    <th>MERCHANT</th>
+                    <th>AMOUNT</th>
+                    <th>FLAGS</th>
+                    <th>SCORE</th>
+                    <th>DISPUTE REASON</th>
+                  </tr>
+                </thead>
+                <tbody id="transaction-table-body">
+                  <tr><td colspan="7" style="text-align:center;color:var(--text-dim)">Loading data...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: FRAUD RINGS & COLLUSION NETWORKS -->
+      <section id="panel-rings" class="panel">
+        <div class="kpi-deck">
+          <div class="kpi-tile glow-red">
+            <div class="kpi-label">Total Graph Rings</div>
+            <div class="kpi-value" id="kpi-total-rings">...</div>
+            <div class="kpi-sub">NetworkX graph topology indexed</div>
+          </div>
+          <div class="kpi-tile glow-amber">
+            <div class="kpi-label">Merchant Collusion Rings</div>
+            <div class="kpi-value" id="kpi-merch-rings">...</div>
+            <div class="kpi-sub">Shared bank settlement accounts</div>
+          </div>
+          <div class="kpi-tile glow-purple">
+            <div class="kpi-label">Synthetic Mule Clusters</div>
+            <div class="kpi-value" id="kpi-synth-rings">...</div>
+            <div class="kpi-sub">Shared government PAN credentials</div>
+          </div>
+          <div class="kpi-tile glow-cyan">
+            <div class="kpi-label">Coordinated Dispute Loops</div>
+            <div class="kpi-value" id="kpi-dispute-rings">...</div>
+            <div class="kpi-sub">Multi-node connected dispute subgraphs</div>
+          </div>
+        </div>
+
+        <!-- Interactive Cytoscape Graph Canvas Card -->
+        <div class="card" id="graph-canvas-card" style="margin-bottom: 20px;">
+          <div class="card-head">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="card-title">Fraud Ring Graph Inspector</span>
+              <span class="card-tag" id="cy-cluster-type" style="color:var(--cyan);">GRAPH ANALYSIS</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <label style="font-size:11px;font-family:var(--mono);color:var(--text-dim);">SELECT CLUSTER:</label>
+              <select id="ring-select" onchange="loadRingGraph(this.value)" style="background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:11px;padding:4px 8px;border-radius:4px;outline:none;">
+                <option value="RING-MERCH-0101">RING-MERCH-0101 (4 Merchants // Shared Acct XXXX1304)</option>
+                <option value="RING-DISPUTE-1560">RING-DISPUTE-1560 (MCH3549 Critical 100% CB Dispute Loop)</option>
+                <option value="RING-MERCH-0089">RING-MERCH-0089 (3 Merchants // Shared Acct XXXX0248)</option>
+                <option value="RING-DISPUTE-1551">RING-DISPUTE-1551 (Coordinated 4-Node Dispute Network)</option>
+                <option value="RING-MERCH-0130">RING-MERCH-0130 (2 Merchants // Shared Acct XXXX3614)</option>
+              </select>
+              <button class="tour-btn secondary" onclick="if(window.cyInstance) window.cyInstance.fit(30);">Center</button>
+            </div>
+          </div>
+          <div id="cy-container" style="height: 350px; background: #f1f3f5; border-radius: 6px; position: relative; border: 1px solid var(--border);"></div>
+          <div id="cy-info" style="margin-top: 10px; padding: 8px 12px; background: var(--surface); border-radius: 4px; border: 1px solid var(--border); font-size: 11px; font-family: var(--mono); color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+            <span id="cy-selected-node">Click any node to view details</span>
+            <div style="display:flex;gap:14px;">
+              <span style="color:var(--cyan);">● Settlement Hub</span>
+              <span style="color:var(--amber);">● Merchant Node</span>
+              <span style="color:var(--danger);">● High CB Merchant</span>
+              <span style="color:var(--purple);">● Customer Node</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="rings-table-card">
+          <div class="card-head">
+            <span class="card-title">Detected Fraud Rings</span>
+            <span class="card-tag">DETECTED RINGS</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>RING ID</th>
+                  <th>RING TYPE</th>
+                  <th>ENTITIES</th>
+                  <th>VOLUME</th>
+                  <th>SCORE</th>
+                  <th>DESCRIPTION</th>
+                </tr>
+              </thead>
+              <tbody id="rings-table-body">
+                <tr><td colspan="6" style="text-align:center;color:var(--text-dim)">Loading data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: RISK LEDGER -->
+      <section id="panel-ledger" class="panel">
+        <!-- What-If Policy & Threshold Simulator Card -->
+        <div class="card" id="simulator-card" style="margin-bottom: 20px;">
+          <div class="card-head">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="card-title">Risk Policy Simulator</span>
+              <span class="card-tag" style="color:var(--amber);">POLICY SIMULATOR</span>
+            </div>
+            <button class="tour-btn secondary" onclick="resetSimulator()">Reset Defaults</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px;">
+            <!-- Slider 1 -->
+            <div style="background:var(--surface); padding:14px; border-radius:6px; border:1px solid var(--border);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <label style="font-size:12px; font-weight:700; color:var(--text);">Automated Decline Risk Cutoff</label>
+                <span id="sim-score-val" style="font-family:var(--mono); color:var(--danger); font-weight:700;">0.35</span>
+              </div>
+              <input type="range" id="sim-score-slider" min="0.10" max="0.80" step="0.05" value="0.35" oninput="updateSimulator()" style="width:100%; accent-color:var(--danger); cursor:pointer;" />
+              <div style="font-size:10px; color:var(--text-dim); margin-top:4px;">Transactions with composite score &ge; cutoff are auto-declined.</div>
+            </div>
+
+            <!-- Slider 2 -->
+            <div style="background:var(--surface); padding:14px; border-radius:6px; border:1px solid var(--border);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <label style="font-size:12px; font-weight:700; color:var(--text);">Minimum Multi-Flag Threshold</label>
+                <span id="sim-flag-val" style="font-family:var(--mono); color:var(--amber); font-weight:700;">&ge; 3 flags</span>
+              </div>
+              <input type="range" id="sim-flag-slider" min="1" max="5" step="1" value="3" oninput="updateSimulator()" style="width:100%; accent-color:var(--amber); cursor:pointer;" />
+              <div style="font-size:10px; color:var(--text-dim); margin-top:4px;">Transactions triggering &ge; flags undergo Step-Up 2FA / Manual Hold.</div>
+            </div>
+          </div>
+
+          <!-- Dynamic Simulation KPIs -->
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background:var(--surface-card); padding:14px; border-radius:6px; border:1px solid var(--border-light);">
+            <div>
+              <div style="font-size:10px; font-family:var(--mono); color:var(--text-dim);">AUTOMATED DECLINES</div>
+              <div id="sim-declines" style="font-size:18px; font-weight:800; color:var(--danger); margin-top:2px;">...</div>
+              <div style="font-size:10px; color:var(--text-muted);">Flagged transactions</div>
+            </div>
+            <div>
+              <div style="font-size:10px; font-family:var(--mono); color:var(--text-dim);">PROTECTED VOLUME</div>
+              <div id="sim-protected" style="font-size:18px; font-weight:800; color:var(--safe); margin-top:2px;">...</div>
+              <div style="font-size:10px; color:var(--text-muted);">Blocked volume</div>
+            </div>
+            <div>
+              <div style="font-size:10px; font-family:var(--mono); color:var(--text-dim);">EST. FALSE POSITIVE FRICTION</div>
+              <div id="sim-fpr" style="font-size:18px; font-weight:800; color:var(--amber); margin-top:2px;">...</div>
+              <div style="font-size:10px; color:var(--text-muted);">False positive rate</div>
+            </div>
+            <div>
+              <div style="font-size:10px; font-family:var(--mono); color:var(--text-dim);">CLEAN APPROVAL RATE</div>
+              <div id="sim-approval" style="font-size:18px; font-weight:800; color:var(--cyan); margin-top:2px;">...</div>
+              <div style="font-size:10px; color:var(--text-muted);">Legitimate throughput</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="ledger-table-card">
+          <div class="card-head">
+            <span class="card-title">High Risk Merchants</span>
+            <input type="text" id="merchant-search" placeholder="Search merchant name or ID..." onkeyup="filterMerchants()" style="background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:12px;padding:6px 12px;border-radius:4px;outline:none;" />
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>MERCHANT ID</th>
+                  <th>ENTITY NAME</th>
+                  <th>CATEGORY</th>
+                  <th>TXNS</th>
+                  <th>DISPUTES</th>
+                  <th>CB RATIO</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="merchant-table-body">
+                <tr><td colspan="7" style="text-align:center;color:var(--text-dim)">Loading data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: POWER BI EMBED -->
+      <section id="panel-powerbi" class="panel">
+        <div class="card powerbi-box">
+          <h3 style="font-size:16px;color:var(--amber);margin-bottom:8px;">Power BI Dashboard</h3>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;max-width:600px;margin-left:auto;margin-right:auto;">
+            Once your teammate publishes her report to Power BI Service (Web), copy the <strong>Publish to Web / Embed URL</strong> and paste it into the container below.
+          </p>
+          <iframe id="powerbi-frame" style="width:100%; height:620px; border:1px solid var(--border); border-radius:8px; background:#f8f9fb;" src="about:blank" title="Power BI Report Embed"></iframe>
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating Copilot Widget -->
+    <aside id="copilot-sidebar" class="minimized">
+      <div class="copilot-header">
+        <div class="copilot-header-info">
+          <div class="copilot-header-title">Fraud <span>Copilot</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--safe);">● Online</span>
+          <button id="copilot-toggle-btn" class="copilot-toggle-btn" onclick="toggleCopilot()" title="Close Copilot">✕</button>
+        </div>
+      </div>
+
+      <!-- Quick Investigation Chips -->
+      <div class="copilot-chip-zone">
+        <button class="copilot-chip" data-prompt="Which merchant has the highest chargeback-to-transaction ratio?">Top CB</button>
+        <button class="copilot-chip" data-prompt="Show detected merchant collusion rings">Fraud Rings</button>
+        <button class="copilot-chip" data-prompt="Show chargeback reason distribution">Reasons</button>
+        <button class="copilot-chip" data-prompt="Show disputes reported after 7 days">Late Claims</button>
+      </div>
+
+      <!-- Chat Feed -->
+      <div class="copilot-body" id="copilot-body">
+        <div class="chat-bubble bot">
+          <div class="tag"><span>COPILOT</span><span>ONLINE</span></div>
+          <div>Copilot ready. Ask questions about fraud patterns, merchant risk, or transaction data.</div>
+        </div>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="copilot-input-zone">
+        <input id="copilot-input" type="text" placeholder="Ask about rings, velocity, users…" onkeydown="if(event.key==='Enter') sendCopilotQuery()" />
+        <button onclick="sendCopilotQuery()">Ask</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Interactive Guided Tour Elements -->
+  <div id="tour-backdrop" onclick="exitTour()"></div>
+  <div id="tour-modal">
+    <div class="tour-step-badge" id="tour-step-badge">STEP 1 OF 5</div>
+    <div class="tour-title" id="tour-title">Executive Telemetry</div>
+    <div class="tour-content" id="tour-content">Track ₹23.92 Crore in monitored volume and live systemic fraud risk benchmarks.</div>
+    <div class="tour-footer">
+      <div class="tour-dots" id="tour-dots">
+        <span class="tour-dot active"></span>
+        <span class="tour-dot"></span>
+        <span class="tour-dot"></span>
+        <span class="tour-dot"></span>
+        <span class="tour-dot"></span>
+      </div>
+      <div class="tour-btns">
+        <button class="tour-btn secondary" onclick="exitTour()">Exit</button>
+        <button class="tour-btn primary" id="tour-next-btn" onclick="nextTourStep()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Action Button for Copilot -->
+  <button id="copilot-fab" onclick="toggleCopilot()" title="Open Copilot">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+    </svg>
+  </button>
+
+  <!-- Scripts -->
+  <script src="api.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="chat.js"></script>
+</body>
+</html>

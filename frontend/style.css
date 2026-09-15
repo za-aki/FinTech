@@ -1,0 +1,734 @@
+:root {
+  --bg: #f8f9fb;
+  --surface: #f1f3f5;
+  --surface-card: #ffffff;
+  --surface-hover: #edf0f3;
+  --border: #e2e5ea;
+  --border-light: #d1d5db;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-dim: #9ca3af;
+  --primary: #2563eb;
+  --primary-light: rgba(37, 99, 235, 0.08);
+  --amber: #d97706;
+  --amber-light: rgba(217, 119, 6, 0.08);
+  --danger: #dc2626;
+  --danger-light: rgba(220, 38, 38, 0.08);
+  --safe: #059669;
+  --safe-light: rgba(5, 150, 105, 0.08);
+  --cyan: #0891b2;
+  --cyan-light: rgba(8, 145, 178, 0.08);
+  --purple: #7c3aed;
+  --purple-light: rgba(124, 58, 237, 0.08);
+  --copilot-width: 340px;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Top Command Bar ─────────────────────────────── */
+.command-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-title h1 {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text);
+}
+
+.brand-title h1 span { color: var(--primary); }
+
+.brand-title .tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.8px;
+  margin-top: 1px;
+}
+
+/* Navigation Tabs */
+.top-nav {
+  display: flex;
+  gap: 2px;
+  background: var(--surface);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.tab-btn.active {
+  color: #fff;
+  background: var(--primary);
+  font-weight: 700;
+}
+
+/* Header Right Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Tour Button */
+.btn-tour {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-tour:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Status Badge */
+.radar-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--safe-light);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  color: var(--safe);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.radar-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--safe);
+}
+
+/* ── Split Work Area ───────────────────────────────── */
+#app-body {
+  display: flex;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
+
+#main-stage {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* Panels */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* KPI Deck */
+.kpi-deck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.kpi-tile {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.kpi-tile.glow-amber { border-left: 4px solid var(--amber); }
+.kpi-tile.glow-red { border-left: 4px solid var(--danger); }
+.kpi-tile.glow-purple { border-left: 4px solid var(--purple); }
+.kpi-tile.glow-cyan { border-left: 4px solid var(--cyan); }
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.kpi-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-sub {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* Charts Grid Layouts */
+.charts-grid-split {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.charts-grid-equal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Cards */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.card-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Plot Containers */
+.plot-container {
+  width: 100%;
+  min-height: 300px;
+}
+
+/* Data Tables */
+.table-wrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.data-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.data-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table tr:hover td {
+  background: var(--surface-hover);
+}
+
+/* Badges */
+.badge-pill {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.badge-pill.critical,
+.badge-status.critical {
+  background: var(--danger-light);
+  color: var(--danger);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.badge-pill.high,
+.badge-status.high {
+  background: var(--amber-light);
+  color: var(--amber);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.badge-pill.active,
+.badge-status.active {
+  background: var(--safe-light);
+  color: var(--safe);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.badge-pill.inactive,
+.badge-status.inactive {
+  background: var(--surface);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+.badge-status {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+/* ── Floating Copilot Widget ────────────────────────────── */
+#copilot-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  cursor: pointer;
+  z-index: 999;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#copilot-fab:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
+}
+
+#copilot-sidebar {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  width: 380px;
+  height: 600px;
+  max-height: calc(100vh - 120px);
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  transition: opacity 0.2s, transform 0.2s;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#copilot-sidebar.minimized {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+.copilot-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-card);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copilot-header-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.copilot-header-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.copilot-header-title span { color: var(--primary); }
+
+.copilot-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.copilot-chip-zone {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  background: var(--surface);
+}
+
+.copilot-chip-zone::-webkit-scrollbar { height: 2px; }
+
+.copilot-chip {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.copilot-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.copilot-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-bubble {
+  font-size: 12.5px;
+  line-height: 1.5;
+  border-radius: 8px;
+  padding: 10px 12px;
+  max-width: 94%;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background: var(--primary-light);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  color: var(--text);
+}
+
+.chat-bubble.bot {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  max-width: 98%;
+}
+
+.chat-bubble.bot .tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--primary);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.sql-trace-box {
+  margin-top: 8px;
+  background: #f8f9fb;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cyan);
+  overflow-x: auto;
+}
+
+.chart-card-wrap {
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.chart-card-wrap img {
+  width: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+.copilot-input-zone {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-card);
+  display: flex;
+  gap: 6px;
+}
+
+.copilot-input-zone input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  outline: none;
+}
+
+.copilot-input-zone input:focus { border-color: var(--primary); }
+
+.copilot-input-zone button {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  border: none;
+  padding: 0 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.copilot-input-zone button:hover {
+  background: #1d4ed8;
+}
+
+/* ── Guided Tour Modal ─────────────────────────────── */
+#tour-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: transparent;
+  pointer-events: none;
+  z-index: 998;
+  display: none;
+}
+
+#tour-backdrop.active { display: block; }
+
+#tour-modal {
+  position: fixed;
+  z-index: 999;
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 380px;
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+#tour-modal.active { display: block; }
+
+.tour-step-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--primary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tour-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.tour-content {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.tour-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tour-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.tour-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-light);
+}
+
+.tour-dot.active {
+  background: var(--primary);
+}
+
+.tour-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.tour-btn {
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tour-btn.secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.tour-btn.secondary:hover {
+  background: var(--surface);
+}
+
+.tour-btn.primary {
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  color: #fff;
+}
+
+.tour-btn.primary:hover {
+  background: #1d4ed8;
+}
+
+/* Spotlight target */
+.tour-highlight {
+  outline: 2px solid var(--primary) !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
+  position: relative;
+  z-index: 999 !important;
+}
+
+/* PowerBI Panel */
+.powerbi-box {
+  background: var(--surface-card);
+  border: 1px dashed var(--border-light);
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .charts-grid-split,
+  .charts-grid-equal {
+    grid-template-columns: 1fr;
+  }
+
+  #copilot-sidebar {
+    width: 280px;
+    min-width: 280px;
+  }
+
+  .kpi-deck {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
