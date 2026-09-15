@@ -2,10 +2,8 @@
  * api.js — Backend connection & data transformation utilities
  */
 
-// Auto-detect backend host
-const API_URL = (window.location.origin && window.location.origin.includes(":8000"))
-  ? ""
-  : (window.API_URL || "http://localhost:8000");
+// Auto-detect backend host (works locally and on Render)
+const API_URL = "";
 
 const DEFAULT_THREAD_ID = "datathon-session";
 

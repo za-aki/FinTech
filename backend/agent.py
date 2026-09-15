@@ -1,10 +1,10 @@
 """
-backend/agent.py — Fraud Analytics Copilot
+agent.py
 
-Architecture:  Intent Decomposition → SQL Generation → Execution →
-               Chart Rendering → Response Synthesis  (LangGraph StateGraph)
-
-Single source of truth: fraud_analytics_table.csv (produced by pipeline_v2_fraud_scoring.py).
+This handles the AI chatbot and dashboard APIs.
+It uses LangGraph to turn user questions into SQL, runs it against DuckDB,
+and returns the answers and charts.
+Reads from fraud_analytics_table.csv.
 """
 
 import os
@@ -51,6 +51,7 @@ llm = ChatGroq(
     model=MODEL_NAME,
     api_key=groq_api_key,
     temperature=0.0,
+    max_tokens=800,
 )
 
 # ── Database ───────────────────────────────────────────────────────────

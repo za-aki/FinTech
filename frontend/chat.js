@@ -1,5 +1,6 @@
 /**
- * chat.js — Always-On Autonomous Fraud Copilot
+ * chat.js
+ * Handles the chatbot UI, message bubbles, and sending questions to the API.
  */
 
 const copilotInput = document.getElementById("copilot-input");

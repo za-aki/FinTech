@@ -1,12 +1,12 @@
 """
-backend/fraud_ring_detection.py — Graph-Based UPI Fraud Ring & Collusion Detection
+fraud_ring_detection.py
 
-Detects:
-1. Merchant Collusion Rings: Multiple distinct merchant entities funneling funds into identical settlement accounts.
-2. Synthetic Identity Rings: Disparate user accounts registered under duplicate PAN/Aadhaar credentials.
-3. Coordinated Dispute Clusters: NetworkX bipartite connected components linking high-dispute users and merchants.
+Finds fraud rings using NetworkX graphs. We look for:
+1. Merchants sharing the same bank account.
+2. Users sharing the same PAN card.
+3. Groups of users and merchants disputing a lot of transactions together.
 
-Outputs: suspicious_cycles.csv (consumed by pipeline_v2_fraud_scoring.py)
+Saves the results to suspicious_cycles.csv so the main pipeline can use it.
 """
 
 import os
@@ -21,9 +21,7 @@ CB_PATH = "../data/cleaned/cleaned_chargebacks.csv"
 OUTPUT_CYCLES = "suspicious_cycles.csv"
 
 def run_fraud_ring_detection():
-    print("=" * 65)
-    print("GRAPH FRAUD RING & COLLUSION DETECTION ENGINE (NETWORKX)")
-    print("=" * 65)
+    print("Finding fraud rings using NetworkX...")
 
     txn = pd.read_csv(TXN_PATH)
     kyc = pd.read_csv(KYC_PATH)

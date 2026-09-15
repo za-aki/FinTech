@@ -1,14 +1,10 @@
 """
-Fraud-Scoring Pipeline (v2) — the single source of truth for both agent.py
-and the matplotlib dashboard.
+pipeline.py
 
-Ingest (cleaned CSVs) -> Deduplicate -> Join -> Flag every column
-individually -> Flag after grouping (user/merchant/category/day) ->
-Composite fraud_risk_score -> Output one table.
-
-Column names below match the REQUIRED_COLUMNS schema already validated
-against your real files in agent.py. If any flag_* logic below looks off
-against your actual data, it's flagged with a comment — check and adjust.
+This script cleans and joins all the datasets together.
+It flags suspicious activities based on business logic and gives every
+transaction a fraud_risk_score from 0 to 1.
+The final output is saved to fraud_analytics_table.csv and loaded into DuckDB.
 """
 
 import os
