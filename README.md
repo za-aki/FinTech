@@ -20,7 +20,13 @@ We went beyond standard SQL analytics by implementing a bipartite graph engine u
 ### 3. Analytics Engine & Dashboard (`agent.py` & `frontend/`)
 *   **DuckDB:** All cleaned data is compiled into a high-performance, 112-feature analytical table loaded into in-memory DuckDB for zero-latency queries.
 *   **Risk Policy Simulator:** An interactive dashboard widget allowing risk officers to instantly see the trade-off between blocking fraudulent transactions and increasing false-positive customer friction.
-*   **AI Copilot (Bonus Objective):** A floating AI widget powered by Groq and LangChain that converts natural language questions directly into executable DuckDB SQL, rendering dynamic charts on the fly.
+
+## 🏆 Best AI Agent Submission (Bonus Category)
+We built our AI Copilot specifically to target the 30-point Agentic AI Bonus and the ₹3,000 special prize. 
+Instead of relying on basic API calls, we engineered a fully autonomous **Text-to-SQL & Text-to-Chart Agent**:
+*   **The Brain:** We used **LangChain** and **LangGraph** to build a directed acyclic graph (DAG) reasoning engine.
+*   **The LLM:** Powered by **Groq** (running the incredibly fast **Qwen 2.5 27B** model).
+*   **The Execution:** It writes read-only **DuckDB SQL** in real-time based on natural language questions, executes it securely in memory, and uses **Matplotlib** to dynamically render the exact requested chart type (Bar, Line, Pie, or Scatter) alongside a synthesized text summary.
 
 ## 💻 Tech Stack
 *   **Backend:** Python 3, FastAPI, Pandas, NetworkX, DuckDB

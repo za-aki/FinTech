@@ -31,12 +31,11 @@ While joining, we calculate 112 different features for every single transaction.
 
 Every transaction gets a `fraud_risk_score` from 0.0 to 1.0 based on these flags, the merchant's chargeback ratio, and their graph cycle score. This is all saved to `fraud_analytics_table.csv` and loaded into **DuckDB** for lightning-fast queries.
 
-## 4. The AI Copilot (LangChain + Groq)
-Instead of just a static dashboard, we built an AI widget in `backend/agent.py`.
-*   When you ask a question, the **Qwen 27B** model looks at our DuckDB schema.
-*   It writes a DuckDB SQL query to answer your question.
-*   We execute the SQL in memory (we block `DROP` or `DELETE` commands for safety).
-*   If you ask for a chart, it uses `matplotlib` to draw one and sends it to the frontend.
+## 4. 🏆 The AI Copilot (Targeting the ₹3,000 Bonus Prize)
+We didn't just plug in a basic ChatGPT prompt. We built a fully autonomous **LangGraph** engine to perfectly hit the 30-point AI bonus rubric:
+*   **NLP Understanding (10 pts):** Powered by **Groq** (using the lightning-fast Qwen 27B model), it understands natural language and maps it to our exact 112-column DuckDB schema.
+*   **Dynamic Charting (10 pts):** It writes secure DuckDB SQL in real-time, executes it, and uses **Matplotlib** to dynamically draw the correct chart type (Bar, Line, Pie, Scatter) without human intervention.
+*   **Text Summaries (10 pts):** The LangChain pipeline synthesizes the exact numbers from the SQL execution into a clean, human-readable summary that displays next to the chart.
 
 ## 5. Judge Q&A Defense Strategy
 
