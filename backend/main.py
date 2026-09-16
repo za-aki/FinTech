@@ -112,6 +112,17 @@ def ask(payload: AskRequest):
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
     logger.info("Question: %s", question[:120])
+    
+    # Fast-path for conversational greetings to bypass the SQL engine
+    clean_q = question.lower().strip(" .?!")
+    greet_words = {"hi", "hello", "hey", "help", "who are you", "what can you do", "greetings"}
+    if clean_q in greet_words:
+        return AskResponse(
+            answer="Hello! I am the FinTech AI Copilot. I can analyze the database in real-time and generate actionable charts. Try asking me:\n\n- *'Show me top 5 merchants by dispute count'*\n- *'Plot a pie chart of transactions by risk tier'*\n- *'Show me a bar chart of volume by merchant category'*",
+            chart_generated=False,
+            sql=""
+        )
+
     try:
         result = agent.invoke(
             {"question": question},
