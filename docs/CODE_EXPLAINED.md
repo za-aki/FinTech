@@ -1,54 +1,34 @@
 # FinTech - UPI Fraud Intelligence: Code & Methodology
-TransOrg AgentIQ Datathon
 
-This document explains exactly how our data pipeline, graph engine, and AI copilot work under the hood. We engineered this system to go far beyond standard SQL aggregations by focusing on data integrity, mathematical graph theory, and deterministic AI execution.
+Here is a simple breakdown of how our team built the data pipeline, the graph analysis, and the AI chatbot for this project.
 
----
+## 1. Cleaning the Data (Pandas)
+We used `pandas` in our backend to clean up the messy data without losing important transactions.
 
-## 1. Data Cleaning (Pandas)
-We used the `pandas` library heavily in `backend/pipeline.py` and our Jupyter notebooks to fix the messy data without recklessly dropping rows. 
+*   **Cleaning IDs:** The user and merchant IDs were messy (like `USR-123` or `usr 123`). We used regex to strip out special characters so we could properly link the tables together later.
+*   **Fixing Currency:** The amount column had commas and strange symbols. We stripped everything except the numbers and turned them into clean floats.
+*   **Parsing Dates:** The timestamps were all over the place. We used Pandas to standardize them so we could track trends over time.
+*   **Duplicates:** We found exactly 400 identical duplicate rows in the raw file. We dropped them so we wouldn't fake the total network volume, but we preserved 100% of the actual 20,000 unique transactions.
 
-*   Cleaning IDs: `user_id` and `merchant_id` were messy (e.g., `USR-123`, `usr 123`). We used regex `.str.replace(r'[^A-Z0-9]', '', regex=True)` to standardize everything so our SQL joins would actually work.
-*   Fixing Currency: The `amount` column had strange symbols and commas. We stripped everything except numbers and decimals, and cast it to a `float`.
-*   Parsing Dates: The timestamps were in completely different formats. We used `pd.to_datetime(..., errors='coerce')` to standardize them so we could do time-series analysis.
-*   Deduplication: We found exactly 400 identical duplicate rows in the raw transaction file. We dropped them so we wouldn't artificially inflate the total network volume. We successfully preserved 100% of the 20,000 unique transactions.
+## 2. Finding Fraud Rings (NetworkX)
+Just looking at a spreadsheet isn't enough to find organized fraud. We used a Python library called `NetworkX` to build graphs and find connections between accounts.
 
-## 2. Fraud Ring Detection (NetworkX)
-We didn't just run SQL queries. Because UPI transactions are bipartite, direct peer-to-peer fraud is hidden. We used `NetworkX` in `backend/fraud_ring_detection.py` to build graphs and expose shared infrastructure:
+*   **Merchant Rings:** We grouped merchants by their bank settlement accounts. If multiple different merchants route their money to the exact same bank account, it's a huge red flag. We found 203 of these rings.
+*   **Fake Users:** We grouped users by their PAN card. If multiple user accounts share the exact same PAN, they are likely fake "mule" accounts. We found 1,340 of these.
+*   **Dispute Networks:** We found 24 specific networks where the exact same group of users keep disputing transactions with the exact same group of merchants.
 
-*   Merchant Collusion: We grouped merchants by their `settlement_account`. If multiple storefronts route money to the exact same bank account, it's a collusion ring. We found 203 of these.
-*   Synthetic Identities: We grouped users by their `pan` card. If multiple user IDs share the exact same PAN, they are likely mule accounts. We found 1,340 of these clusters.
-*   Coordinated Disputes: We built a bipartite graph connecting users to merchants. Using `nx.connected_components()`, we found 24 dense networks where the same group of users are constantly disputing transactions with the same group of merchants.
+## 3. Joining the Data
+In `backend/pipeline.py`, we join all the tables together (Transactions + KYC + Merchants + Chargebacks + Fraud Rings).
+While joining, we calculate over 100 different risk features for every transaction. For example:
+*   **Ticket Size Mismatch:** We check if the transaction amount is way higher than what the merchant usually sells.
+*   **Income to Spend Ratio:** We check if a user is spending 5x more than their declared annual income.
+*   **Ghost Users:** We flag transactions where the user isn't even in the KYC database.
 
-## 3. The 112-Feature Pipeline & DuckDB
-In `backend/pipeline.py`, we do a massive 5-way join (Transactions + KYC + Merchants + Chargebacks + Fraud Rings).
-While joining, we calculate 112 different features for every single transaction. 
+Every transaction gets a fraud risk score from 0.0 to 1.0 based on these flags. We save this clean dataset and load it into DuckDB so our dashboard can query it instantly.
 
-How our joins detect fraud:
-*   Ticket Size Mismatch: We check if the transaction amount is >5x higher than the merchant's `declared_avg_ticket_size`.
-*   Income to Spend Ratio: We check if a user is spending 5x more than their declared annual income.
-*   Ghost Users: We flag transactions where the `user_id` literally doesn't exist in the KYC database.
+## 4. The AI Chatbot (For the Bonus Prize)
+We wanted to hit the 30-point AI bonus, so we built an AI chatbot that actually writes SQL code instead of just guessing answers.
 
-Every transaction gets a `fraud_risk_score` from 0.0 to 1.0 based on these flags, the merchant's chargeback ratio, and their graph cycle score. This is all saved to `fraud_analytics_table.csv` and loaded into DuckDB for fast querying.
-
-## 4. The AI Copilot (Targeting the Bonus Prize)
-We built a LangGraph engine to hit the 30-point AI bonus rubric, completely avoiding the hallucination risks of basic chat APIs:
-*   NLP Understanding (10 pts): Powered by Groq (using the Qwen 27B model), it understands natural language and maps it to our exact 112-column DuckDB schema.
-*   Dynamic Charting (10 pts): It writes secure DuckDB SQL in real-time, executes it, and uses Matplotlib to draw the correct chart type (Bar, Line, Pie, Scatter) on the fly.
-*   Text Summaries (10 pts): The LangChain pipeline synthesizes the exact numbers from the SQL execution into a clean, human-readable summary that displays next to the chart.
-
-## 5. Judge Q&A Defense Strategy
-
-If the judges ask us these questions during the pitch, here is exactly how we answer:
-
-Question: "Why did you drop 400 transactions from the raw file?"
-Answer: "We analyzed the raw 20,400 rows and found exactly 400 identical duplicates where every single field (timestamp, UTR, user, amount) was an exact copy. If we kept them, it would have artificially inflated the revenue by Rs. 48 Lakhs. We kept 100% of the distinct transactions and didn't drop anything just because it was missing KYC data."
-
-Question: "How did your pipeline detect fraud during the joins?"
-Answer: "Our joins actually created fraud signals. For example, when we joined transactions to merchants, we compared the transaction amount to the merchant's declared average ticket size. If there was a massive 5x spike, we flagged it as a compromised terminal. When we joined users, we flagged anyone spending way more than their declared annual income."
-
-Question: "How did you detect fraud rings?"
-Answer: "Because transactions are just user-to-merchant, direct user-to-user cycles don't exist. So we used NetworkX to look at shared infrastructure. We found 203 merchant rings where different storefronts route money to the same bank account, and 1,340 synthetic user rings sharing the exact same PAN card."
-
-Question: "Why did you build an AI Copilot instead of just a dashboard?"
-Answer: "Standard dashboards are static. Real fraud investigation requires exploratory SQL. Our AI looks at our 112 columns in DuckDB and writes deterministic SQL in real time. We also built a 'View SQL' toggle in the chat so risk officers can verify the exact query logic instead of blindly trusting the AI."
+*   **How it understands:** It uses Groq (with the Qwen 27B model) to understand English questions and figure out what data the user is asking for.
+*   **How it gets data:** It translates the English question into DuckDB SQL, runs the query on our clean dataset, and then uses Matplotlib to draw a chart (Bar, Line, Pie, or Scatter).
+*   **Why we made it transparent:** AI can sometimes hallucinate, which is bad for a bank. So we added a "View SQL Query" button in the chat. This lets anyone click and see the exact SQL code the AI wrote to make sure the math is right.

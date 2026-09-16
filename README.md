@@ -31,4 +31,4 @@ We didn't just plug a basic LLM API into a chatbox that hallucinates answers. We
 * `FinTech_Fraud_Intelligence_Pitch.pdf` - Our architectural presentation deck.
 * `frontend/` & `backend/` - The complete source code for our deployed application.
 * `outputs/audit_evidence/` - Auto-generated proof of 100% data integrity post-joins.
-* `docs/CODE_EXPLAINED.md` - A deep dive into the code, logic, and judge Q&A defense.
+* `docs/CODE_EXPLAINED.md` - A deep dive into the code, logic, 
