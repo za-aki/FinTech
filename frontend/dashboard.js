@@ -605,7 +605,7 @@ const TOUR_STEPS = [
     tab: "overview",
     badge: "STEP 6 OF 6 — COPILOT",
     title: "Fraud Analysis Copilot",
-    content: "The copilot is always available on the right side. It uses DuckDB to query the transaction data and can generate charts on the fly. Try asking a question or use a quick chip.",
+    content: "The copilot is always available on the right side. It uses DuckDB to query the transaction data and can generate charts on the fly. Try asking a question or use a quick chip! Also, make sure to try clicking on a lot of things throughout the dashboard—the charts and graphs are highly interactive.",
     placement: "left"
   }
 ];
