@@ -61,6 +61,9 @@ function appendMessage(role, text, imageUrl = null, sql = null) {
   copilotBody.scrollTop = copilotBody.scrollHeight;
 }
 
+let questionCount = 0;
+const MAX_QUESTIONS = 10;
+
 /**
  * Send user prompt to Copilot
  */
@@ -68,6 +71,16 @@ async function sendCopilotQuery(customPrompt = null) {
   const query = (customPrompt || (copilotInput ? copilotInput.value : "")).trim();
   if (!query) return;
 
+  if (questionCount >= MAX_QUESTIONS) {
+    appendMessage("bot", "🚨 **Demo Limit Reached:** To protect backend cloud resources, this interactive demo is restricted to 10 AI queries per session. Please refresh the page to start a new session.");
+    if (copilotInput) {
+      copilotInput.disabled = true;
+      copilotInput.placeholder = "Session limit reached. Refresh page.";
+    }
+    return;
+  }
+
+  questionCount++;
   if (copilotInput) copilotInput.value = "";
 
   appendMessage("user", query);
