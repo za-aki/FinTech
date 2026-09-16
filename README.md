@@ -19,6 +19,12 @@ UPI transactions are bipartite (user-to-merchant), meaning direct peer-to-peer f
 ### 3. Actionable Business Logic (Risk Simulator) & Power BI
 Static charts don't solve business problems. We built a custom HTML/JS **Risk Policy Simulator**. By adjusting risk thresholds on the dashboard, executives can instantly simulate the trade-off between blocking fraudulent transactions and increasing false-positive customer friction. We also integrated a deep-dive **Power BI** dashboard directly into the UI for enterprise analysts.
 
+## Enterprise Security & LLM Guardrails
+Because generative AI can be dangerous in a live banking environment, we hardcoded strict guardrails into our Python backend:
+* **Anti-SQL Injection:** The LangGraph agent is completely blocked from executing DML/DDL commands. If the AI ever hallucinates a `DROP`, `DELETE`, or `UPDATE` statement, our backend intercepts and kills the query before it hits the database.
+* **Cloud Resource Protection:** To prevent API abuse on our public Render demo, the chat interface restricts users to 10 queries per session.
+* **Path Traversal Blocks:** The FastAPI server strictly enforces file extensions, making it impossible for attackers to read our backend Python logic or environment secrets.
+
 ## Best AI Agent Submission (Targeting the 30-Point Bonus)
 We didn't just plug a basic LLM API into a chatbox that hallucinates answers. We built a deterministic Text-to-SQL engine targeting the AI bonus rubric.
 * **The Pipeline:** A LangChain and LangGraph reasoning engine.
