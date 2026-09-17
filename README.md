@@ -8,7 +8,7 @@ This repository contains our final submission for Track 1. While a lot of dashbo
 ## The Architecture: Why We Built It This Way
 
 ### 1. Data Integrity & Automated Audits
-Most data pipelines just drop rows when the data gets messy. Instead, Bhavya and I collaborated to build a robust Pandas pipeline using regex to clean the raw data, fix mismatched IDs, and format currencies. We preserved **100% of the 20,000 unique transactions** through a massive 5-way join. 
+Most data pipelines just drop rows when the data gets messy. Instead, Bhavya and I collaborated to build a robust Pandas pipeline using regex to clean the raw data, fix mismatched IDs, and format currencies. We preserved **100% of the 20,000 unique transactions** through a massive 4-way join. 
 *To prove that we didn't accidentally lose or duplicate any transactions during the joins, our pipeline automatically generates an `outputs/audit_evidence/` folder. This proves our math is totally solid.*
 
 ### 2. NetworkX Graph Theory (The Secret Weapon)
